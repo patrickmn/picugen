@@ -1,0 +1,17 @@
+Picugen is a cryptographic hash (string representation) generator written in Go. It lets you easily
+get the MD4/MD5/RIPEMD-160/SHA-1/SHA-224/SHA-256/SHA-384/SHA-512 hash of a string, with an optional
+salt.
+
+Usage: ./picugen [-s <salt>] <string to hash>
+
+Example:
+
+    # ./picugen -s abc p4ssw0rd
+    md4        8cbf36fd4f5fc42b8942390ee414b3c6
+    md5        6061cc510c8d91df0ac04ec1b425f22e
+    ripemd160  fc5b1a8c45ef71a0270de6241ec3d2e7a35aaac9
+    sha1       5961223addf84ab0ced7085f5129f2bc4baa41ba
+    sha224     73b96dab9e761458ad9a626f0b783cc8cd0cc854b482084be8327e9e
+    sha256     7d3afe134062bfbc7599ecfbbfb5145448c5e01f84b3cb6008e0dd4ef9ac2d7a
+    sha384     2b028ef992f0586e4a384b0ce79e6faa0fa997435a5dd535293cb83ae1a1c7f2f0c87119f08204ed5bf49954cc5ea4d3
+    sha512     acfe290dd21a8430e55f09b5949f6bd3e300abed9d06fdc93192f6fcaf2de61f077f1e81cc0ce52642d86f8a4beea658991ccc2cdc0ef4bc27b3bdf9b06e70bc
