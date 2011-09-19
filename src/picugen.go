@@ -165,7 +165,7 @@ func Usage() {
 	fmt.Println("")
 	fmt.Println(`Note: Strings containing multiple words must be surrounded by either " or '. For complex
       strings, put the string in a file, then run Picugen on the file. (Don't add newlines
-      to the file as they will alter the output.`)
+      to the file as they will alter the output.)`)
 }
 
 func main() {
