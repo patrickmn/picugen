@@ -95,7 +95,6 @@ func TestHashString(t *testing.T) {
 		normal := HashString(g, testStr)
 		g.Reset()
 		salted := HashString(g, testSalt+testStr)
-		g.Reset()
 		if normal != v[0] {
 			t.Error("Alg", k, "got hash:", normal, "- expected", v[0])
 		}
