@@ -60,24 +60,4 @@ b2f44e98d8c6752d216ab560185db31fc2f1f07c  /etc/ffserver.conf
 b355a92a0cdd2a797a7b75c981d7e3df702ec937  /etc/kernel-img.conf
 1ee9db344f9be0c9891dd767de02781dad0f28fb  /etc/kerneloops.conf
 addee0472ac552e7c43db27234ee260282b9b988  /etc/ld.so.conf
-f5e11c00e5363292a2f0d972d0554bf477a58a81  /etc/lftp.conf
-54568ce5fa9639573b43dd649ea62a9935a53f3a  /etc/logrotate.conf
-199b8f4e01eb40fdfef9dac2108049188fcf1174  /etc/ltrace.conf
-b418d04b3f3cd0cff0a46040c2337f0b5164a4f2  /etc/mke2fs.conf
-13b86fcffe5799a04f3519ac6da728cb361b6f26  /etc/mtools.conf
-7de34291f8c3772353ed83a9513e82a624eebdd7  /etc/netscsid.conf
-f7f1f4d57277a3d319d871d7fe98f13375f305b1  /etc/nsswitch.conf
-f3a131387778ba216d9095823f4e30c545dde167  /etc/pam.conf
-a2d074e849ca716ec6adf3cd4b803a4efd362444  /etc/pnm2ppa.conf
-10c9333550d10045235fb08360fc474a87eeff28  /etc/popularity-contest.conf
-cbb0d8c937709445e594dcfff46759902b4891bb  /etc/resolv.conf
-f4057321efb337dbe7d77b8a9ae84df200b9a13d  /etc/rsyslog.conf
-2d4ae7745b3b25b959a338a31687be072d9627dd  /etc/sensors3.conf
-ff905022d3c2eb47d647ccbfe444716f9dd762bb  /etc/sysctl.conf
-a081d31973caf01abe65146e5c13aaebc0408f4f  /etc/tpvmlp.conf
-330e12437f24e5887dc375f822e6a2ba23413a9c  /etc/ts.conf
-e07ee4d943405802e40312551704ea05e5205422  /etc/tsocks.conf
-376627ae91fc9f7c0b0fa8f863237582a2a6ea95  /etc/ucf.conf
-03ddd649c72c9ce5a2fc8504cc0a64430692894f  /etc/updatedb.conf
-83cf7be0126984cb469f4022f74cd5c056cfc17e  /etc/usb_modeswitch.conf
-d52103cb370b526e37330af28f6a8969e868e673  /etc/wodim.conf
+...
