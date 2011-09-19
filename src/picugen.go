@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/hmac"
 	"crypto/md4"
 	"crypto/md5"
 	"crypto/ripemd160"
@@ -28,6 +29,7 @@ const (
 var (
 	alg *string = flag.String("a", "md5", "algorithm")
 	str *string = flag.String("s", "", "string to hash instead of file")
+	key *string = flag.String("k", "", "key (for hashes that use a key, e.g. HMAC)")
 	salt *string = flag.String("salt", "", "salt")
 )
 
@@ -46,6 +48,11 @@ var (
 		"fnv32a": "32-bit FNV-1a",
 		"fnv64": "64-bit FNV-1",
 		"fnv64a": "64-bit FNV-1a",
+		"hmac": "Keyed-Hash Message Authentication Code (HMAC) (requires -k <key>) (defaults to SHA-256)",
+		"hmacmd5": "HMAC using MD5 (requires -k <key>)",
+		"hmacsha1": "HMAC using SHA-1 (requires -k <key>)",
+		"hmacsha256": "HMAC using SHA-256 (requires -k <key>)",
+		"hmacsha512": "HMAC using SHA-512 (requires -k <key>)",
 		"md4": "MD4 hash (RFC 1320)",
 		"md5": "MD5 hash (RFC 1321)",
 		"ripemd160": "RIPEMD-160 hash",
@@ -82,6 +89,14 @@ func GetGenerator(a string) (hash.Hash, os.Error) {
 		g = fnv.New64()
 	case "fnv64a":
 		g = fnv.New64a()
+	case "hmac", "hmacsha256":
+		g = hmac.NewSHA256([]byte(*key))
+	case "hmacmd5":
+		g = hmac.NewMD5([]byte(*key))
+	case "hmacsha1":
+		g = hmac.NewSHA256([]byte(*key))
+	case "hmacsha512":
+		g = hmac.New(sha512.New, []byte(*key))
 	case "md4":
 		g = md4.New()
 	case "md5":
