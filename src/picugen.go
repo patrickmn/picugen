@@ -24,7 +24,7 @@ import (
 
 const (
 	version = "1.0"
-	chunkSize = 2097152 // Read files in 2MB chunks
+	chunkSize = 32768 // Read files in 32KB chunks
 )
 
 var (
