@@ -24,6 +24,11 @@ Available algorithms (default is MD5):
   fnv32a          32-bit FNV-1a
   fnv64           64-bit FNV-1
   fnv64a          64-bit FNV-1a
+  hmac            Keyed-Hash Message Authentication Code (HMAC) (requires -k <key>) (defaults to SHA-256)
+  hmacmd5         HMAC using MD5 (requires -k <key>)
+  hmacsha1        HMAC using SHA-1 (requires -k <key>)
+  hmacsha256      HMAC using SHA-256 (requires -k <key>)
+  hmacsha512      HMAC using SHA-512 (requires -k <key>)
   md4             MD4 hash (RFC 1320)
   md5             MD5 hash (RFC 1321)
   ripemd160       RIPEMD-160 hash
