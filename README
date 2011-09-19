@@ -5,10 +5,10 @@ by a large variety of algorithms including MD5, SHA-1 and SHA-256.
 Usage: ./picugen [-a <algorithm>] [-salt <salt>] -s <string to hash>/-f <file to hash>
 
 Examples:
-  ./picugen -a md5 document.txt                 Generate MD5 hash of a file
-  ./picugen -a md5 *                            Generate MD5 hash of all files in folder
-  ./picugen -a sha1 -s "hello world"            Generate SHA-1 hash of a string
-  ./picugen -a sha1 -salt s4lt -s "hello world" Generate salted SHA-1 hash of a string
+  ./picugen -a md5 document.txt                  Generate MD5 hash of a file
+  ./picugen -a md5 *                             Generate MD5 hash of all files in folder
+  ./picugen -a sha1 -s "hello world"             Generate SHA-1 hash of a string
+  ./picugen -a sha1 -salt s4lt -s "hello world"  Generate salted SHA-1 hash of a string
 
 Available algorithms (default is MD5):
   adler32         Adler-32 checksum (RFC 1950)
@@ -37,6 +37,10 @@ Available algorithms (default is MD5):
   sha256          SHA-256 hash (FIPS 180-2)
   sha384          SHA-384 hash (FIPS 180-2)
   sha512          SHA-512 hash (FIPS 180-2)
+
+Note: Strings containing multiple words must be surrounded by either " or '. For complex
+      strings, put the string in a file, then run Picugen on the file. (Don't add newlines
+      to the file as they will alter the output.
 
 Sample output:
 
