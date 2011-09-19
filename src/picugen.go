@@ -28,9 +28,9 @@ const (
 
 var (
 	alg  *string = flag.String("a", "md5", "algorithm")
-	str  *string = flag.String("s", "", "string to hash instead of file")
 	key  *string = flag.String("k", "", "key (for hashes that use a key, e.g. HMAC)")
 	salt *string = flag.String("salt", "", "salt")
+	hashStr  *bool = flag.Bool("s", false, "hash a string")
 )
 
 var (
@@ -144,12 +144,12 @@ func HashFile(gen hash.Hash, f io.Reader) (string, os.Error) {
 }
 
 func Usage() {
-	fmt.Println("Usage:", os.Args[0], "[-a <algorithm>] [-salt <salt>] -s <string to hash>/-f <file to hash>\n")
+	fmt.Println("Usage:", os.Args[0], "[-a <algorithm>] [-salt <salt>] [-s <string to hash>] / <file(s) to hash>\n")
 	fmt.Println("Examples:")
-	fmt.Println(" ", os.Args[0], `-a md5 document.txt                 `, "Generate MD5 hash of a file")
-	fmt.Println(" ", os.Args[0], `-a md5 *                            `, "Generate MD5 hash of all files in folder")
-	fmt.Println(" ", os.Args[0], `-a sha1 -s "hello world"            `, "Generate SHA-1 hash of a string")
-	fmt.Println(" ", os.Args[0], `-a sha1 -salt s4lt -s "hello world" `, "Generate salted SHA-1 hash of a string")
+	fmt.Println(" ", os.Args[0], `-a md5 document.txt               `, "Generate MD5 hash of a file")
+	fmt.Println(" ", os.Args[0], `-a md5 *                          `, "Generate MD5 hash of all files in folder")
+	fmt.Println(" ", os.Args[0], `-a sha1 -s hello world            `, "Generate SHA-1 hash of a string")
+	fmt.Println(" ", os.Args[0], `-a sha1 -salt s4lt -s hello world `, "Generate salted SHA-1 hash of a string")
 	fmt.Println("")
 	fmt.Println("Available algorithms (default is MD5):")
 	mk := make([]string, len(algDescs))
@@ -163,14 +163,13 @@ func Usage() {
 		fmt.Printf("  %-15s %s\n", v, algDescs[v])
 	}
 	fmt.Println("")
-	fmt.Println(`Note: Strings containing multiple words must be surrounded by either " or '. For complex
-      strings, put the string in a file, then run Picugen on the file. (Don't add newlines
-      to the file as they will alter the output.)`)
+	fmt.Println(`Note: For complex strings, put the string in a file, then run Picugen on
+      the file. (Don't add newlines to the file as they will alter the output.)`)
 }
 
 func main() {
 	flag.Parse()
-	if flag.NArg() == 0 && *str == "" {
+	if flag.NArg() == 0 {
 		Usage()
 		return
 	}
@@ -180,7 +179,16 @@ func main() {
 		fmt.Println("Error:", err)
 		return
 	}
-	if *str == "" { // Hash file(s)
+	if *hashStr {
+		var s string
+		for i, word := range flag.Args() {
+			if i > 0 {
+				s += " "
+			}
+			s += word
+		}
+		fmt.Println(HashString(gen, *salt+s))
+	} else {
 		for _, path := range flag.Args() {
 			var res string
 			f, err := os.Open(path)
@@ -198,7 +206,5 @@ func main() {
 			fmt.Println(res, "", path)
 			gen.Reset()
 		}
-	} else { // Hash string
-		fmt.Println(HashString(gen, *salt+*str))
 	}
 }
