@@ -23,6 +23,7 @@ import (
 )
 
 const (
+	version = "1.0"
 	chunkSize = 2097152 // Read files in 2MB chunks
 )
 
