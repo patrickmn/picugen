@@ -40,6 +40,9 @@ Available algorithms (default is MD5):
 
 Sample output:
 
+# ./picugen /bin/bash
+3a12472dee4ed695084c2582240a83ad  /bin/bash
+
 # ./picugen -a sha256 -salt s3cr3t -s p4ssw0rd
 bcd4a8f23d02931039f0296ca6164f3942b1629b12001bc8e6ffec4df8884848
 
