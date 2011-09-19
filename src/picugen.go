@@ -146,10 +146,10 @@ func HashFile(gen hash.Hash, f io.Reader) (string, os.Error) {
 func Usage() {
 	fmt.Println("Usage:", os.Args[0], "[-a <algorithm>] [-salt <salt>] -s <string to hash>/-f <file to hash>\n")
 	fmt.Println("Examples:")
-	fmt.Println(" ", os.Args[0], "-a md5 document.txt               ", "Generate MD5 hash of a file")
-	fmt.Println(" ", os.Args[0], "-a md5 *                          ", "Generate MD5 hash of all files in folder")
-	fmt.Println(" ", os.Args[0], "-a sha1 -s hello world            ", "Generate SHA-1 hash of a string")
-	fmt.Println(" ", os.Args[0], "-a sha1 -salt s4lt -s hello world ", "Generate salted SHA-1 hash of a string")
+	fmt.Println(" ", os.Args[0], `-a md5 document.txt                 `, "Generate MD5 hash of a file")
+	fmt.Println(" ", os.Args[0], `-a md5 *                            `, "Generate MD5 hash of all files in folder")
+	fmt.Println(" ", os.Args[0], `-a sha1 -s "hello world"            `, "Generate SHA-1 hash of a string")
+	fmt.Println(" ", os.Args[0], `-a sha1 -salt s4lt -s "hello world" `, "Generate salted SHA-1 hash of a string")
 	fmt.Println("")
 	fmt.Println("Available algorithms (default is MD5):")
 	mk := make([]string, len(algDescs))
@@ -162,6 +162,10 @@ func Usage() {
 	for _, v := range mk {
 		fmt.Printf("  %-15s %s\n", v, algDescs[v])
 	}
+	fmt.Println("")
+	fmt.Println(`Note: Strings containing multiple words must be surrounded by either " or '. For complex
+      strings, put the string in a file, then run Picugen on the file. (Don't add newlines
+      to the file as they will alter the output.`)
 }
 
 func main() {
