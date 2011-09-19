@@ -16,7 +16,6 @@ import (
 	"hash/crc64"
 	"hash/fnv"
 	"io"
-	"log"
 	"os"
 	"sort"
 	"strings"
@@ -174,7 +173,8 @@ func main() {
 	*alg = strings.ToLower(*alg)
 	gen, err := GetGenerator(*alg)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println("Error:", err)
+		return
 	}
 	if *str == "" { // Hash file(s)
 		for _, path := range flag.Args() {
