@@ -95,7 +95,7 @@ func GetGenerator(a string) (hash.Hash, os.Error) {
 	case "hmacmd5":
 		g = hmac.NewMD5([]byte(*key))
 	case "hmacsha1":
-		g = hmac.NewSHA256([]byte(*key))
+		g = hmac.NewSHA1([]byte(*key))
 	case "hmacsha512":
 		g = hmac.New(sha512.New, []byte(*key))
 	case "md4":
