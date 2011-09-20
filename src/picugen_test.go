@@ -20,7 +20,7 @@ A wonderful carpet.
 )
 
 var (
-	stringHashes = [][3]string{
+	testStringHashes = [][3]string{
 		// alg, expected (but maybe keyed) hash, expected salted hash
 		{"adler32", "1a0b045d", "4fb407d4"},
 		{"crc32", "0d4a1185", "2a78850e"},
@@ -49,7 +49,7 @@ var (
 		{"sha384", "fdbd8e75a67f29f701a4e040385e2e23986303ea10239211af907fcbb83578b3e417cb71ce646efd0819dd8c088de1bd", "1cf01c88fa2d6b9c7b3d73e37c75ba0a4593f113c58b2a3813ede9f407bdf05a53f20eccda164c6620e3a7373a44d8e2"},
 		{"sha512", "309ecc489c12d6eb4cc40f50c902f2b4d0ed77ee511a7c7a9bcd3ca86d4cd86f989dd35bc5ff499670da34255b45b0cfd830e81f605dcf7dc5542e93ae9cd76f", "3c4e388ff39154cd2ff294e4ba0a8e146e90b92ef698f1507dfbd94cb2f8c5d84b066cac70553f8dedc672192200f6821cd22986233d0ee0ac51e43d1dd7e363"},
 	}
-	fileHashes = [][3]string{
+	testFileHashes = [][3]string{
 		// alg, expected (but maybe keyed) hash, expected salted hash
 		{"adler32", "00153577", "1af038ee"},
 		{"crc32", "29d06dfc", "0f20b19d"},
@@ -86,7 +86,7 @@ func init() {
 }
 
 func TestHashString(t *testing.T) {
-	for _, v := range stringHashes {
+	for _, v := range testStringHashes {
 		g, err := GetGenerator(v[0])
 		if err != nil {
 			t.Error("GetGenerator alg", v[0], ":", err)
@@ -112,7 +112,7 @@ func TestHashFile(t *testing.T) {
 	f.WriteString(testFile)
 	f.Close()
 
-	for _, v := range fileHashes {
+	for _, v := range testFileHashes {
 		g, err := GetGenerator(v[0])
 		if err != nil {
 			t.Error("GetGenerator alg", v[0], ":", err)
