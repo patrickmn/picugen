@@ -127,7 +127,7 @@ func TestHashFile(t *testing.T) {
 		*salt = ""
 		normal, err := HashFile(g, f)
 		if err != nil {
-			t.Fatal("Alg", k, "HashFile error (normal):", err)
+			t.Error("Alg", k, "HashFile error (normal):", err)
 		}
 		g.Reset()
 		f.Close()
@@ -140,7 +140,7 @@ func TestHashFile(t *testing.T) {
 		*salt = testSalt
 		salted, err := HashFile(g, f)
 		if err != nil {
-			t.Fatal("Alg", k, "HashFile error (salted):", err)
+			t.Error("Alg", k, "HashFile error (salted):", err)
 		}
 		f.Close()
 
