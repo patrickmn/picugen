@@ -192,7 +192,6 @@ func main() {
 		for _, path := range flag.Args() {
 			var res string
 			f, err := os.Open(path)
-			defer f.Close()
 			if err != nil {
 				res = err.String()
 			} else {
@@ -204,6 +203,7 @@ func main() {
 				}
 			}
 			fmt.Println(res, "", path)
+			f.Close()
 			gen.Reset()
 		}
 	}
