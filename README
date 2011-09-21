@@ -5,10 +5,10 @@ algorithms including MD5, SHA-1, and SHA-256.
 Usage: picugen [-a <algorithm>] [-salt <salt>] [-s <string to hash>] / <file(s) to hash>
 
 Examples:
-  picugen -a md5 document.txt                Generate MD5 hash of a file
-  picugen -a md5 *                           Generate MD5 hash of all files in folder
-  picugen -a sha1 -s hello world             Generate SHA-1 hash of a string
-  picugen -a sha1 -salt s4lt -s hello world  Generate salted SHA-1 hash of a string
+  picugen -a md5 document.txt                Generate MD5 digest of a file
+  picugen -a md5 *                           Generate MD5 digests of all files in folder
+  picugen -a sha1 -s hello world             Generate SHA-1 digest of a string
+  picugen -a sha1 -salt s4lt -s hello world  Generate salted SHA-1 digest of a string
   picugen -a hmacsha1 -k k3y -s untouched    Generate HMAC of a string using SHA-1
 
 Available algorithms (default is SHA-256):
