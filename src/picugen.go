@@ -27,7 +27,7 @@ const (
 )
 
 var (
-	alg  *string = flag.String("a", "md5", "algorithm")
+	alg  *string = flag.String("a", "sha256", "algorithm")
 	key  *string = flag.String("k", "", "key (for hashes that use a key, e.g. HMAC)")
 	salt *string = flag.String("salt", "", "salt")
 	hashStr  *bool = flag.Bool("s", false, "hash a string")
@@ -151,7 +151,7 @@ func Usage() {
 	fmt.Println(" ", os.Args[0], `-a sha1 -s hello world            `, "Generate SHA-1 hash of a string")
 	fmt.Println(" ", os.Args[0], `-a sha1 -salt s4lt -s hello world `, "Generate salted SHA-1 hash of a string")
 	fmt.Println("")
-	fmt.Println("Available algorithms (default is MD5):")
+	fmt.Println("Available algorithms (default is SHA-256):")
 	mk := make([]string, len(algDescs))
 	i := 0
 	for k, _ := range algDescs {

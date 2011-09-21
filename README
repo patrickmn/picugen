@@ -1,6 +1,6 @@
 Picugen is a cryptographic and non-cryptographic hash/checksum generator written in Go.
-It can be used to easily obtain (optionally salted) hashes of strings and files produced
-by a large variety of algorithms including MD5, SHA-1 and SHA-256.
+It can be used to easily obtain (optionally salted) digests of strings and files using
+a large variety of algorithms including MD5, SHA-1 and SHA-256.
 
 Usage: ./picugen [-a <algorithm>] [-salt <salt>] [-s <string to hash>] / <file(s) to hash>
 
@@ -10,7 +10,7 @@ Examples:
   ./picugen -a sha1 -s hello world             Generate SHA-1 hash of a string
   ./picugen -a sha1 -salt s4lt -s hello world  Generate salted SHA-1 hash of a string
 
-Available algorithms (default is MD5):
+Available algorithms (default is SHA-256):
   adler32         Adler-32 checksum (RFC 1950)
   crc32           32-bit cyclic redundancy check (CRC-32) checksum (defaults to IEEE polynomial)
   crc32castagnoli CRC-32 using the Castagnoli polynomial (0x82f63b78)
