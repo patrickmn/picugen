@@ -150,6 +150,7 @@ func Usage() {
 	fmt.Println(" ", os.Args[0], `-a md5 *                          `, "Generate MD5 hash of all files in folder")
 	fmt.Println(" ", os.Args[0], `-a sha1 -s hello world            `, "Generate SHA-1 hash of a string")
 	fmt.Println(" ", os.Args[0], `-a sha1 -salt s4lt -s hello world `, "Generate salted SHA-1 hash of a string")
+	fmt.Println(" ", os.Args[0], `-a hmacsha1 -k k3y -s untouched   `, "Generate HMAC of a string using SHA-1")
 	fmt.Println("")
 	fmt.Println("Available algorithms (default is SHA-256):")
 	mk := make([]string, len(algDescs))

@@ -1,14 +1,15 @@
 Picugen is a cryptographic and non-cryptographic hash/checksum generator written in Go.
-It can be used to easily obtain (optionally salted) digests of strings and files using
-a large variety of algorithms including MD5, SHA-1 and SHA-256.
+It can be used to easily obtain digests of strings and files using a large variety of
+algorithms including MD5, SHA-1, and SHA-256.
 
-Usage: ./picugen [-a <algorithm>] [-salt <salt>] [-s <string to hash>] / <file(s) to hash>
+Usage: picugen [-a <algorithm>] [-salt <salt>] [-s <string to hash>] / <file(s) to hash>
 
 Examples:
-  ./picugen -a md5 document.txt                Generate MD5 hash of a file
-  ./picugen -a md5 *                           Generate MD5 hash of all files in folder
-  ./picugen -a sha1 -s hello world             Generate SHA-1 hash of a string
-  ./picugen -a sha1 -salt s4lt -s hello world  Generate salted SHA-1 hash of a string
+  picugen -a md5 document.txt                Generate MD5 hash of a file
+  picugen -a md5 *                           Generate MD5 hash of all files in folder
+  picugen -a sha1 -s hello world             Generate SHA-1 hash of a string
+  picugen -a sha1 -salt s4lt -s hello world  Generate salted SHA-1 hash of a string
+  picugen -a hmacsha1 -k k3y -s untouched    Generate HMAC of a string using SHA-1
 
 Available algorithms (default is SHA-256):
   adler32         Adler-32 checksum (RFC 1950)
@@ -43,24 +44,27 @@ Note: For complex strings, put the string in a file, then run Picugen on
 
 Sample output:
 
-# ./picugen /bin/bash
-3a12472dee4ed695084c2582240a83ad  /bin/bash
+# picugen /bin/bash
+664c1834f30f83c97f48b1f364b8368bb0c9949a8fedd29413bb16d70a6e41c6  /bin/bash
 
-# ./picugen -a sha256 -salt s3cr3t -s p4ssw0rd
+# picugen -salt s3cr3t -s p4ssw0rd
 bcd4a8f23d02931039f0296ca6164f3942b1629b12001bc8e6ffec4df8884848
 
-# ./picugen -a sha1 /etc/*.conf
-432e7ce0f184473bc4f2ffaba60c3582fb06121a  /etc/adduser.conf
-693d52ebfb7bb7c4e7c67e7152feaec725ac3794  /etc/blkid.conf
-97d3924e88f179534cb79bb40c374cd6436c0827  /etc/ca-certificates.conf
-d0f08b9c8893167ab7892c62a3bc6e48cdf3f20d  /etc/debconf.conf
-e79074abdca16eb19b9cd545f2ceaa995dccb062  /etc/deluser.conf
-b2f44e98d8c6752d216ab560185db31fc2f1f07c  /etc/ffserver.conf
-0a483a8608ea8a98eb0ecc310a728d6d383667d4  /etc/gai.conf
-0dbc5f9198afc53df95e4b9bcbfcb4d8e05ee264  /etc/hdparm.conf
-7be0c4f402d2c0e120e1be86ffb86c8490b091a4  /etc/host.conf
-83488da9c2c70fa4354abc2623fba9bb64f80433  /etc/insserv.conf
-b355a92a0cdd2a797a7b75c981d7e3df702ec937  /etc/kernel-img.conf
-1ee9db344f9be0c9891dd767de02781dad0f28fb  /etc/kerneloops.conf
-addee0472ac552e7c43db27234ee260282b9b988  /etc/ld.so.conf
+# picugen -a md5 /etc/*.conf
+2081f795b0f92490c1c3f00b964e36de  /etc/adduser.conf
+7f4c49e01e0a23d2f4b20eeb32e95abb  /etc/blkid.conf
+9c7fa15fd6d8f34a0267101f051f107b  /etc/ca-certificates.conf
+8c0619be413824f1fc7698cee0f23811  /etc/debconf.conf
+527e6a57d0bc9f7c1b1aca2071f3da00  /etc/deluser.conf
+7e84402ab9129df85117336840b3d78f  /etc/ffserver.conf
+629c0e2f8276b26c29b95f7ed53074d7  /etc/gai.conf
+ca3e32b09c7bfda7e7e3580a587e3c2b  /etc/hdparm.conf
+89408008f2585c957c031716600d5a80  /etc/host.conf
+4cdcca89f13642d97f1044c647d19e2e  /etc/insserv.conf
+f41f22e0d7f16d43f59f682c78224348  /etc/kernel-img.conf
+6fb908bd3381b55ee942b261a701aea4  /etc/kerneloops.conf
+4317c6de8564b68d628c21efa96b37e4  /etc/ld.so.conf
 ...
+
+# picugen -a hmacsha1 -k 0r4cl3 -s this message is verifiable with the key
+15dabc3b4c2cc60c216970a0723f24a3ffc4d4ca
