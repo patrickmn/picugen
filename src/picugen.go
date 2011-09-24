@@ -22,14 +22,14 @@ import (
 )
 
 const (
-	version   = "1.0"
+	version = "1.0"
 )
 
 var (
-	alg  *string = flag.String("a", "sha256", "algorithm")
-	key  *string = flag.String("k", "", "key (for hashes that use a key, e.g. HMAC)")
-	salt *string = flag.String("salt", "", "salt")
-	hashStr  *bool = flag.Bool("s", false, "hash a string")
+	alg     *string = flag.String("a", "sha256", "algorithm")
+	key     *string = flag.String("k", "", "key (for hashes that use a key, e.g. HMAC)")
+	salt    *string = flag.String("salt", "", "salt")
+	hashStr *bool   = flag.Bool("s", false, "hash a string")
 )
 
 var (
