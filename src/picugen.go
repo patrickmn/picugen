@@ -23,7 +23,6 @@ import (
 
 const (
 	version   = "1.0"
-	chunkSize = 32768 // Read files in 32KB chunks
 )
 
 var (
@@ -123,22 +122,10 @@ func HashString(gen hash.Hash, s string) string {
 }
 
 func HashFile(gen hash.Hash, f io.Reader) (string, os.Error) {
-	buf := make([]byte, chunkSize)
 	gen.Write([]byte(*salt))
-	for {
-		bytesRead, err := f.Read(buf)
-		if err != nil {
-			if err == os.EOF && bytesRead == 0 { // Empty file
-				gen.Write([]byte(""))
-			} else {
-				return "", err
-			}
-		} else {
-			gen.Write(buf[:bytesRead])
-		}
-		if bytesRead < chunkSize { // EOF
-			break
-		}
+	_, err := io.Copy(gen, f)
+	if err != nil {
+		return "", err
 	}
 	return fmt.Sprintf("%x", gen.Sum()), nil
 }
