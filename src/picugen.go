@@ -67,7 +67,7 @@ func GetGenerator(a string) (hash.Hash, os.Error) {
 	var g hash.Hash
 	switch a {
 	default:
-		return md5.New(), os.NewError("Invalid algorithm")
+		return nil, os.NewError("Invalid algorithm")
 	case "adler32":
 		g = adler32.New()
 	case "crc32", "crc32ieee":
