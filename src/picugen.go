@@ -8,7 +8,6 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
-	"errors"
 	"flag"
 	"fmt"
 	"hash"
@@ -64,11 +63,11 @@ var (
 	}
 )
 
-func GetGenerator(a string) (hash.Hash, error) {
+func GetGenerator(a string) (hash.Hash, os.Error) {
 	var g hash.Hash
 	switch a {
 	default:
-		return nil, errors.New("Invalid algorithm")
+		return nil, os.NewError("Invalid algorithm")
 	case "adler32":
 		g = adler32.New()
 	case "crc32", "crc32ieee":
@@ -122,7 +121,7 @@ func HashString(gen hash.Hash, s string) string {
 	return fmt.Sprintf("%x", gen.Sum())
 }
 
-func HashFile(gen hash.Hash, f io.Reader) (string, error) {
+func HashFile(gen hash.Hash, f io.Reader) (string, os.Error) {
 	gen.Write([]byte(*salt))
 	_, err := io.Copy(gen, f)
 	if err != nil {
@@ -182,11 +181,11 @@ func main() {
 			var res string
 			f, err := os.Open(path)
 			if err != nil {
-				res = err.Error()
+				res = err.String()
 			} else {
 				h, err := HashFile(gen, f)
 				if err != nil {
-					res = err.Error()
+					res = err.String()
 				} else {
 					res = h
 				}
