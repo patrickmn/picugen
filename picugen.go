@@ -1,13 +1,14 @@
 package main
 
 import (
+	"code.google.com/p/go.crypto/md4"
+	"code.google.com/p/go.crypto/ripemd160"
 	"crypto/hmac"
-	"crypto/md4"
 	"crypto/md5"
-	"crypto/ripemd160"
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
+	"errors"
 	"flag"
 	"fmt"
 	"hash"
@@ -63,71 +64,71 @@ var (
 	}
 )
 
-func GetGenerator(a string) (hash.Hash, os.Error) {
-	var g hash.Hash
+func GetHash(a string) (hash.Hash, error) {
+	var h hash.Hash
 	switch a {
 	default:
-		return nil, os.NewError("Invalid algorithm")
+		return nil, errors.New("Invalid algorithm")
 	case "adler32":
-		g = adler32.New()
+		h = adler32.New()
 	case "crc32", "crc32ieee":
-		g = crc32.New(crc32.MakeTable(crc32.IEEE))
+		h = crc32.New(crc32.MakeTable(crc32.IEEE))
 	case "crc32castagnoli":
-		g = crc32.New(crc32.MakeTable(crc32.Castagnoli))
+		h = crc32.New(crc32.MakeTable(crc32.Castagnoli))
 	case "crc32koopman":
-		g = crc32.New(crc32.MakeTable(crc32.Koopman))
+		h = crc32.New(crc32.MakeTable(crc32.Koopman))
 	case "crc64", "crc64iso":
-		g = crc64.New(crc64.MakeTable(crc64.ISO))
+		h = crc64.New(crc64.MakeTable(crc64.ISO))
 	case "crc64ecma":
-		g = crc64.New(crc64.MakeTable(crc64.ECMA))
+		h = crc64.New(crc64.MakeTable(crc64.ECMA))
 	case "fnv", "fnv32":
-		g = fnv.New32()
+		h = fnv.New32()
 	case "fnv32a":
-		g = fnv.New32a()
+		h = fnv.New32a()
 	case "fnv64":
-		g = fnv.New64()
+		h = fnv.New64()
 	case "fnv64a":
-		g = fnv.New64a()
+		h = fnv.New64a()
 	case "hmac", "hmacsha256":
-		g = hmac.NewSHA256([]byte(*key))
+		h = hmac.New(sha256.New, []byte(*key))
 	case "hmacmd5":
-		g = hmac.NewMD5([]byte(*key))
+		h = hmac.New(md5.New, []byte(*key))
 	case "hmacsha1":
-		g = hmac.NewSHA1([]byte(*key))
+		h = hmac.New(sha1.New, []byte(*key))
 	case "hmacsha512":
-		g = hmac.New(sha512.New, []byte(*key))
+		h = hmac.New(sha512.New, []byte(*key))
 	case "md4":
-		g = md4.New()
+		h = md4.New()
 	case "md5":
-		g = md5.New()
+		h = md5.New()
 	case "ripemd160":
-		g = ripemd160.New()
+		h = ripemd160.New()
 	case "sha1":
-		g = sha1.New()
+		h = sha1.New()
 	case "sha224":
-		g = sha256.New224()
+		h = sha256.New224()
 	case "sha256":
-		g = sha256.New()
+		h = sha256.New()
 	case "sha384":
-		g = sha512.New384()
+		h = sha512.New384()
 	case "sha512":
-		g = sha512.New()
+		h = sha512.New()
 	}
-	return g, nil
+	return h, nil
 }
 
-func HashString(gen hash.Hash, s string) string {
-	gen.Write([]byte(s))
-	return fmt.Sprintf("%x", gen.Sum())
+func HashString(h hash.Hash, s string) string {
+	h.Write([]byte(s))
+	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
-func HashFile(gen hash.Hash, f io.Reader) (string, os.Error) {
-	gen.Write([]byte(*salt))
-	_, err := io.Copy(gen, f)
+func HashFile(h hash.Hash, f io.Reader) (string, error) {
+	h.Write([]byte(*salt))
+	_, err := io.Copy(h, f)
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("%x", gen.Sum()), nil
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
 
 func Usage() {
@@ -162,7 +163,7 @@ func main() {
 		return
 	}
 	*alg = strings.ToLower(*alg)
-	gen, err := GetGenerator(*alg)
+	h, err := GetHash(*alg)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -175,24 +176,24 @@ func main() {
 			}
 			s += word
 		}
-		fmt.Println(HashString(gen, *salt+s))
+		fmt.Println(HashString(h, *salt+s))
 	} else {
 		for _, path := range flag.Args() {
 			var res string
 			f, err := os.Open(path)
 			if err != nil {
-				res = err.String()
+				res = err.Error()
 			} else {
-				h, err := HashFile(gen, f)
+				h, err := HashFile(h, f)
 				if err != nil {
-					res = err.String()
+					res = err.Error()
 				} else {
 					res = h
 				}
+				f.Close()
 			}
 			fmt.Println(res, "", path)
-			f.Close()
-			gen.Reset()
+			h.Reset()
 		}
 	}
 }

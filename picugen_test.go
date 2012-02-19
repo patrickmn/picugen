@@ -2,21 +2,21 @@ package main
 
 import (
 	"flag"
+	"io/ioutil"
 	"os"
 	"testing"
 )
 
 const (
-	testStr      = "hello world"
-	testSalt     = "saltynom"
-	testKey      = "shallpass"
-	testFile     = `This is what a normal
+	testStr  = "hello world"
+	testSalt = "saltynom"
+	testKey  = "shallpass"
+	testFile = `This is what a normal
 text file might look like. It's really interesting
 how the text wraps in the file--like a wonderful carpet.
 
 A wonderful carpet.
 `
-	testFilename = "_test/testhash.txt"
 )
 
 var (
@@ -39,7 +39,7 @@ var (
 		{"hmacmd5", "acfaa637e71a087013767ffcdd2dee6b", "9b2222d3a811e07cf6939d844af5a050"},
 		{"hmacsha1", "6d95b7443b6eb2ec3ee4bb2aa3bf81d1998c36b2", "22ed4e68e132666b91f9ad1d767549b4902a0457"},
 		{"hmacsha256", "c70831e441cbecee9024399ef19faae2d8a4b6084fbca234572649e786215e5b", "d79d4eb769987a45e89ac137a3daec801748218f739b121a80a56171123c9a62"},
-		{"hmacsha512", "64eacf9b1809a88b03f1638147854e3fe82b4a5465e2083a0a96a52efae73b1c1693b51726ddff10b088497b63151945aa5907588d9eb9fb6728800e960c1cf7", "bf86bdad2c13e4a677aed7f565c116db3a2f521ce9ca81e8332db62708cebf488a4f2e7798d524c42a34d90a599c040bee3f0daf9f6b241e0f8d95a74eb9864c"},
+		{"hmacsha512", "0f0b6079200eca3497a40717f3425585508cd129eb208ca1edece2f4a703181df9c3ec5082820d6683a732d0114b9c8d1cd6ec0ff14845e357bdcf07b8d76758", "05e1ed5bfcd6d9b82981eb9f3bdd5c625851dc0b14650f9c116ad8fec856930f30f68594aa9039d2ed569e3920c03d766d7145a97626d8b0738a8419120ec003"},
 		{"md4", "aa010fbc1d14c795d86ef98c95479d17", "46cda5abff44dc708e78e8965b154821"},
 		{"md5", "5eb63bbbe01eeed093cb22bb8f5acdc3", "6208f8d3f2c59298fa9587e93c814c5c"},
 		{"ripemd160", "98c615784ccb5fe5936fbc0cbe9dfdb408d92f0f", "321bc05096e9c97cab9fef5efc099efc1b81643d"},
@@ -68,7 +68,7 @@ var (
 		{"hmacmd5", "c7b8fa07606d75c6e06863287779733c", "b5b8b6944797aac6229e903c42c38f08"},
 		{"hmacsha1", "31cd6b9f0e221a60cd2699dd59ee5d385a2bf83d", "b13f54a25064ca2ad11fb3433ab4069b5be5bf20"},
 		{"hmacsha256", "e388ca73f0a7d89b2131d7096c46455bdfb46bd1d68831684b037ee32bd380d8", "29243c7833bcc577e6657ae7dd1961bb6e5961309ee7a9b46ac3d2f3eab50daa"},
-		{"hmacsha512", "71f84187ab8a671ab6e10fbc667b2c6312ef6b3680d4672e5362df828e7d1e3af19951e010186a90f8299e539c72160277c996b2f6ee1bce9082d049ff9aaaa4", "1f80b39b87cd17ef9b977031f0e61a2798522b767e1042bc253e0f9c1e983c0667c2cab834d84e83bf270b23b169c5a348d75191397eff9987e0bc43327988a7"},
+		{"hmacsha512", "5fb61ebed4aa2bed3c3b8b2d6d0f29d36d0768f2714485e235dc29afc2c0837a204fbce50a1f0279bd12048415e3531f2189109821ff2af1eb4cd72ee6805aeb", "8cbd7e08f9ad0ae5ed550c10e76aae9f1cbb383b84812c5f5bf232b59022437cec5ed67bcad16fa54eefd014caa40d5fa827dc93754611c0c642f41fa46e91ce"},
 		{"md4", "28bfdb75a67610d9491d6def782144d4", "69aaba69af8c3d0481c57d95a6bb66c3"},
 		{"md5", "7b8778e95a7f8dd72a0dfec7127cf062", "5c8c72d2225091b334c6ee091aab3229"},
 		{"ripemd160", "606c0e3b663bc1be0c7b1f1713ee7de6d00ef063", "5d687c74ae181b05378a79bc06b77e3ea9064718"},
@@ -87,14 +87,14 @@ func init() {
 
 func TestHashString(t *testing.T) {
 	for _, v := range testStringHashes {
-		g, err := GetGenerator(v[0])
+		h, err := GetHash(v[0])
 		if err != nil {
-			t.Error("GetGenerator alg", v[0], ":", err)
+			t.Error("GetHash alg", v[0], ":", err)
 			continue
 		}
-		normal := HashString(g, testStr)
-		g.Reset()
-		salted := HashString(g, testSalt+testStr)
+		normal := HashString(h, testStr)
+		h.Reset()
+		salted := HashString(h, testSalt+testStr)
 		if normal != v[1] {
 			t.Error("Alg", v[0], "got hash:", normal, "- expected", v[1])
 		}
@@ -105,40 +105,41 @@ func TestHashString(t *testing.T) {
 }
 
 func TestHashFile(t *testing.T) {
-	f, err := os.Create(testFilename)
+	f, err := ioutil.TempFile("", "picugen-testhashfile")
 	if err != nil {
-		t.Fatal("Couldn't write test hash file", testFilename)
+		t.Fatal("Couldn't write test hash file")
 	}
 	f.WriteString(testFile)
 	f.Close()
 
+	fname := f.Name()
 	for _, v := range testFileHashes {
-		g, err := GetGenerator(v[0])
+		h, err := GetHash(v[0])
 		if err != nil {
 			t.Error("GetGenerator alg", v[0], ":", err)
 			continue
 		}
 
 		// Normal
-		f, err := os.Open(testFilename)
+		f, err := os.Open(fname)
 		if err != nil {
-			t.Fatal("Couldn't open hash file", testFilename)
+			t.Fatal("Couldn't open hash file", fname)
 		}
 		*salt = ""
-		normal, err := HashFile(g, f)
+		normal, err := HashFile(h, f)
 		if err != nil {
 			t.Error("Alg", v[0], "HashFile error (normal):", err)
 		}
-		g.Reset()
+		h.Reset()
 		f.Close()
 
 		// Salted
-		f, err = os.Open(testFilename)
+		f, err = os.Open(fname)
 		if err != nil {
-			t.Fatal("Couldn't open hash file", testFilename)
+			t.Fatal("Couldn't open hash file", fname)
 		}
 		*salt = testSalt
-		salted, err := HashFile(g, f)
+		salted, err := HashFile(h, f)
 		if err != nil {
 			t.Error("Alg", v[0], "HashFile error (salted):", err)
 		}
