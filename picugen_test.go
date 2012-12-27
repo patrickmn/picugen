@@ -82,7 +82,7 @@ var (
 
 func init() {
 	flag.Parse()
-	*key = testKey
+	key = testKey
 }
 
 func TestHashString(t *testing.T) {
@@ -125,7 +125,7 @@ func TestHashFile(t *testing.T) {
 		if err != nil {
 			t.Fatal("Couldn't open hash file", fname)
 		}
-		*salt = ""
+		salt = ""
 		normal, err := HashFile(h, f)
 		if err != nil {
 			t.Error("Alg", v[0], "HashFile error (normal):", err)
@@ -138,7 +138,7 @@ func TestHashFile(t *testing.T) {
 		if err != nil {
 			t.Fatal("Couldn't open hash file", fname)
 		}
-		*salt = testSalt
+		salt = testSalt
 		salted, err := HashFile(h, f)
 		if err != nil {
 			t.Error("Alg", v[0], "HashFile error (salted):", err)

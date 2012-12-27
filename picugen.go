@@ -18,20 +18,25 @@ import (
 	"hash/fnv"
 	"io"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 )
 
-const (
-	version = "1.0"
+var (
+	alg     string
+	key     string
+	salt    string
+	hashStr bool
 )
 
-var (
-	alg     *string = flag.String("a", "sha256", "algorithm")
-	key     *string = flag.String("k", "", "key (for hashes that use a key, e.g. HMAC)")
-	salt    *string = flag.String("salt", "", "salt")
-	hashStr *bool   = flag.Bool("s", false, "hash a string")
-)
+func init() {
+	flag.StringVar(&alg, "a", "sha256", "algorithm")
+	flag.StringVar(&key, "k", "", "key (for hashes that use a key, e.g. HMAC)")
+	flag.StringVar(&salt, "salt", "", "salt")
+	flag.BoolVar(&hashStr, "s", false, "hash a string")
+	flag.Parse()
+}
 
 var (
 	algDescs = map[string]string{
@@ -67,8 +72,6 @@ var (
 func GetHash(a string) (hash.Hash, error) {
 	var h hash.Hash
 	switch a {
-	default:
-		return nil, errors.New("Invalid algorithm")
 	case "adler32":
 		h = adler32.New()
 	case "crc32", "crc32ieee":
@@ -90,13 +93,13 @@ func GetHash(a string) (hash.Hash, error) {
 	case "fnv64a":
 		h = fnv.New64a()
 	case "hmac", "hmacsha256":
-		h = hmac.New(sha256.New, []byte(*key))
+		h = hmac.New(sha256.New, []byte(key))
 	case "hmacmd5":
-		h = hmac.New(md5.New, []byte(*key))
+		h = hmac.New(md5.New, []byte(key))
 	case "hmacsha1":
-		h = hmac.New(sha1.New, []byte(*key))
+		h = hmac.New(sha1.New, []byte(key))
 	case "hmacsha512":
-		h = hmac.New(sha512.New, []byte(*key))
+		h = hmac.New(sha512.New, []byte(key))
 	case "md4":
 		h = md4.New()
 	case "md5":
@@ -113,6 +116,8 @@ func GetHash(a string) (hash.Hash, error) {
 		h = sha512.New384()
 	case "sha512":
 		h = sha512.New()
+	default:
+		return nil, errors.New("Invalid algorithm")
 	}
 	return h, nil
 }
@@ -123,7 +128,7 @@ func HashString(h hash.Hash, s string) string {
 }
 
 func HashFile(h hash.Hash, f io.Reader) (string, error) {
-	h.Write([]byte(*salt))
+	h.Write([]byte(salt))
 	_, err := io.Copy(h, f)
 	if err != nil {
 		return "", err
@@ -157,18 +162,17 @@ func Usage() {
 }
 
 func main() {
-	flag.Parse()
 	if flag.NArg() == 0 {
 		Usage()
 		return
 	}
-	*alg = strings.ToLower(*alg)
-	h, err := GetHash(*alg)
+	alg = strings.ToLower(alg)
+	h, err := GetHash(alg)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
-	if *hashStr {
+	if hashStr {
 		var s string
 		for i, word := range flag.Args() {
 			if i > 0 {
@@ -176,24 +180,28 @@ func main() {
 			}
 			s += word
 		}
-		fmt.Println(HashString(h, *salt+s))
+		fmt.Println(HashString(h, salt+s))
 	} else {
-		for _, path := range flag.Args() {
-			var res string
-			f, err := os.Open(path)
-			if err != nil {
-				res = err.Error()
-			} else {
-				h, err := HashFile(h, f)
+		for _, globStr := range flag.Args() {
+			// Okay to ignore error here since error just means no matches
+			paths, _ := filepath.Glob(globStr)
+			for _, path := range paths {
+				var res string
+				f, err := os.Open(path)
 				if err != nil {
 					res = err.Error()
 				} else {
-					res = h
+					h, err := HashFile(h, f)
+					if err != nil {
+						res = err.Error()
+					} else {
+						res = h
+					}
+					f.Close()
 				}
-				f.Close()
+				fmt.Println(res, "", path)
+				h.Reset()
 			}
-			fmt.Println(res, "", path)
-			h.Reset()
 		}
 	}
 }
