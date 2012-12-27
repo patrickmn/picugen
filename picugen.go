@@ -24,10 +24,12 @@ import (
 )
 
 var (
-	alg     string
-	key     string
-	salt    string
-	hashStr bool
+	alg       string
+	key       string
+	salt      string
+	hashStr   bool
+	groupSame bool
+	onlySame  bool
 )
 
 func init() {
@@ -35,7 +37,12 @@ func init() {
 	flag.StringVar(&key, "k", "", "key (for hashes that use a key, e.g. HMAC)")
 	flag.StringVar(&salt, "salt", "", "salt")
 	flag.BoolVar(&hashStr, "s", false, "hash a string")
+	flag.BoolVar(&groupSame, "group-same", false, "group files with identical hash digests (buffers output)")
+	flag.BoolVar(&onlySame, "only-same", false, "only show files with identical hash digests (enables group-same and buffers output)")
 	flag.Parse()
+	if onlySame {
+		groupSame = true
+	}
 }
 
 var (
@@ -166,6 +173,7 @@ func main() {
 		Usage()
 		return
 	}
+	args := flag.Args()
 	alg = strings.ToLower(alg)
 	h, err := GetHash(alg)
 	if err != nil {
@@ -174,33 +182,52 @@ func main() {
 	}
 	if hashStr {
 		var s string
-		for i, word := range flag.Args() {
+		for i, word := range args {
 			if i > 0 {
 				s += " "
 			}
 			s += word
 		}
 		fmt.Println(HashString(h, salt+s))
-	} else {
-		for _, globStr := range flag.Args() {
-			// Okay to ignore error here since error just means no matches
-			paths, _ := filepath.Glob(globStr)
-			for _, path := range paths {
-				var res string
-				f, err := os.Open(path)
+		return
+	}
+	var g map[string][]string
+	if groupSame {
+		// We won't get a lot of identical digests, so reduce allocation
+		// by assuming each file/glob will produce a unique digest.
+		g = make(map[string][]string, len(args))
+	}
+	for _, globStr := range flag.Args() {
+		// Okay to ignore error here since error just means no matches
+		paths, _ := filepath.Glob(globStr)
+		for _, path := range paths {
+			var res string
+			f, err := os.Open(path)
+			if err != nil {
+				res = err.Error()
+			} else {
+				h, err := HashFile(h, f)
 				if err != nil {
 					res = err.Error()
 				} else {
-					h, err := HashFile(h, f)
-					if err != nil {
-						res = err.Error()
-					} else {
-						res = h
-					}
-					f.Close()
+					res = h
 				}
+				f.Close()
+			}
+			if groupSame {
+				g[res] = append(g[res], path)
+			} else {
 				fmt.Println(res, "", path)
-				h.Reset()
+			}
+			h.Reset()
+		}
+	}
+	if groupSame {
+		for k, v := range g {
+			if !onlySame || len(v) > 1 {
+				for _, ov := range v {
+					fmt.Println(k, "", ov)
+				}
 			}
 		}
 	}
